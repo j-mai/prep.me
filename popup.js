@@ -1,5 +1,6 @@
 let subjectButton = document.getElementById('subjectChosen');
 let timeButton = document.getElementById('timeChosen');
+let testButton = document.getElementById('test');
 
 subjectButton.onclick = function(element) {
   console.log("clicked");
@@ -11,15 +12,18 @@ timeButton.onclick = function() {
   chrome.tabs.create({url: "options.html"});
 }
 
-var subject;
+testButton.onclick = function() {
+  console.log("clicked time");
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var questionArray = JSON.parse(this.responseText);
+      var randomQuestion = Math.floor(Math.random() * questionArray.length);
 
-function chrome.storage.local.get('subject', function () {
-
-})
-
-
-chrome.storage.local.get('eula', function(result){
-        eulaV = result.eula;
-        console.log(eulaV);
-        });
-    });
+      document.getElementById("test-text").innerHTML = questionArray[randomQuestion]['definition'];
+      document.getElementById("answer").innerHTML = questionArray[randomQuestion]['term'];
+    }
+  };
+  xhttp.open("GET", "https://cors-anywhere.herokuapp.com/https://api.quizlet.com/2.0/sets/185053801/terms?client_id=YNGAZgyNUf", true);
+  xhttp.send();
+}
