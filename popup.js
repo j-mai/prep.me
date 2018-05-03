@@ -3,6 +3,8 @@ let timeButton = document.getElementById('timeChosen');
 let testButton = document.getElementById('test');
 let onOffButton = document.getElementById('onOff');
 
+//upon the popup window loading, let the user know which subject is chosen and whether the
+//extension is on or off
 window.onload = function() {
   console.log("onload");
   chrome.storage.sync.get('subject', function(result) {
@@ -11,22 +13,44 @@ window.onload = function() {
   });
 
   chrome.storage.sync.get('status', function(result) {
-    console.log(result);
-    onOffButton.innerHTML = result.status;
+    console.log(result.status);
+    if (result.status) {
+      onOffButton.innerHTML = "ON";
+    } else {
+      onOffButton.innerHTML = "OFF";
+    }
   });
 
 };
 
+//navigate to options page if subject button is clicked
 subjectButton.onclick = function(element) {
-  console.log("clicked");
+  console.log("subject Button clicked");
   chrome.tabs.create({url: "options.html"});
 };
 
+//navigate to options page if time button is clicked
 timeButton.onclick = function() {
-  console.log("clicked");
+  console.log("time button clicked");
   chrome.tabs.create({url: "options.html"});
 };
 
+//turn on/off extension if on/off button is clicked
+onOffButton.onclick = function() {
+  console.log("on/off button clicked");
+  chrome.storage.sync.get('status', function(result) {
+    var status = !result.status;
+    chrome.storage.sync.set({'status': status}, function() {
+      if (status) {
+        onOffButton.innerHTML = "ON";
+      } else {
+        onOffButton.innerHTML = "OFF";
+      }
+    });
+  });
+}
+
+//test function for testing connection to quizlet
 testButton.onclick = function() {
   console.log("clicked time");
   var xhttp = new XMLHttpRequest();
